@@ -20,7 +20,7 @@ function RenderCampsite({campsite}) {
     );
 }
     
-function RenderComments({comments}) {
+function RenderComments({comments, addComment, campsiteId}) { //object destructuring to grab
     if (comments) {
         return (
             <div className="col-md-5 m-1">
@@ -31,7 +31,7 @@ function RenderComments({comments}) {
                         <p key={comment.id}> -- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}</p>
                     </>
                 ))}
-                <CommentForm />
+                <CommentForm campsiteId={campsiteId} addComment={addComment} /> {/*passing props to child component */}
             </div>
         );
     }
@@ -63,9 +63,10 @@ class CommentForm extends Component {
     }
 
     handleSubmit(values) {
-        console.log('Submission details: ' + JSON.stringify(values));
-        alert('Your comment has been submitted. Submission details: ' + JSON.stringify(values));
         this.toggleModal();
+        this.props.addComment(this.props.campsiteId, values.rating, values.author, values.text); 
+        //addComment action creator will use this to create an action with the values in this form. gets dispatched to reducer to update state.
+        
     }
     
 
@@ -148,7 +149,11 @@ function CampsiteInfo(props) {
 
                 <div className="row">
                     <RenderCampsite campsite={props.campsite} />
-                    <RenderComments comments={props.comments} />
+                    <RenderComments 
+                        comments={props.comments}
+                        addComment={props.addComment}
+                        campsiteId={props.campsite.id}
+                    />
                 </div>
             </div>
             );
