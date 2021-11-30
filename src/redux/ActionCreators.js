@@ -1,4 +1,5 @@
 import * as ActionTypes from './ActionTypes';
+import { CAMPSITES } from '../shared/campsites'; //to use in server sim
 
 //action creator function to add a comment. returns an object
 export const addComment = (campsiteId, rating, author, text) => ({
@@ -11,3 +12,26 @@ export const addComment = (campsiteId, rating, author, text) => ({
     }
 
 })
+
+export const fetchCampsites = () => dispatch => { //redux' dispatch method passed into function. Double arrows = redux thunk syntax
+
+    dispatch(campsitesLoading()); //use redux dispatch method here. Dispatches campsitesLoading below 
+
+    setTimeout(() => {  //to simulate server delay
+        dispatch(addCampsites(CAMPSITES)); 
+    }, 2000);
+};
+
+export const campsitesLoading = () => ({ //action creator that just returns object, no payload, no middleware; goes straight to reducer
+    type: ActionTypes.CAMPSITES_LOADING
+});
+
+export const campsitesFailed = errMess => ({
+    type: ActionTypes.CAMPSITES_FAILED,
+    payload: errMess
+});
+
+export const addCampsites = campsites => ({
+    type: ActionTypes.ADD_CAMPSITES,
+    payload: campsites
+});
