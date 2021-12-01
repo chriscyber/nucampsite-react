@@ -5,6 +5,9 @@ import { Partners } from './partners';
 import { Promotions } from './promotions';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
+import { createForms } from 'react-redux-form'; //allows combineReducers() to work
+import { InitialFeedback } from './forms';
+
 
 export const ConfigureStore = () => {
     const store = createStore(
@@ -12,7 +15,10 @@ export const ConfigureStore = () => {
             campsites: Campsites,
             comments: Comments,
             partners: Partners,
-            promotions: Promotions
+            promotions: Promotions, 
+            ...createForms({
+                feedbackForm: InitialFeedback //InitialFeedback is model name in forms.js
+            })
         }),
         applyMiddleware(thunk, logger)
     );
