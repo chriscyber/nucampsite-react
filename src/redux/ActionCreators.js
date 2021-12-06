@@ -2,16 +2,7 @@ import * as ActionTypes from './ActionTypes';
 import { baseUrl } from '../shared/baseUrl'; //to use in server sim
 
 //action creator function to add a comment. returns an object
-export const addComment = (campsiteId, rating, author, text) => ({
-    type: ActionTypes.ADD_COMMENT,
-    payload: {
-        campsiteId: campsiteId,
-        rating: rating,
-        author: author,
-        text: text //ES6: can shorten to just text if identifier of prop is same as the value = "shorthand property names"
-    }
 
-})
 
 export const fetchCampsites = () => dispatch => {
     dispatch(campsitesLoading());
@@ -82,6 +73,48 @@ export const addComments = comments => ({
     type: ActionTypes.ADD_COMMENTS,
     payload: comments
 });
+
+export const addComment = comment => ({
+    type: ActionTypes.ADD_COMMENT,
+    payload: comment
+}); // add comment to local redux store (no server interaction)
+
+
+export const postComment = (campsiteId, rating, author, text) => dispatch => {
+    
+    const newComment = {
+        campsiteId: campsiteId,
+        rating: rating,
+        author: author,
+        text: text
+    };
+    newComment.date = new Date().toISOString();
+
+    return fetch(baseUrl + 'comments', {
+            method: "POST", //optional 2nd argument. default is GET
+            body: JSON.stringify(newComment), //json version of newComment object from above
+            headers: { // object so it can hold one or more headers
+                "Content-Type": "application/json" // server knows to expect body to be json formatted
+            }
+        })
+        .then(response => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => { throw error; }
+        )
+        .then(response => response.json()) //when post request successful, server returns data send with an id. 
+        .then(response => dispatch(addComment(response))) //convert response to json then dispatch it with Action Creator which will update store
+        .catch(error => {
+            console.log('post comment', error.message);
+            alert('Your comment could not be posted\nError: ' + error.message);
+        });
+};
 
 
 export const fetchPromotions = () => dispatch => {

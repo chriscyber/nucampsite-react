@@ -23,7 +23,7 @@ function RenderCampsite({campsite}) {
     );
 }
     
-function RenderComments({comments, addComment, campsiteId}) { //object destructuring to grab
+function RenderComments({comments, postComment, campsiteId}) { //object destructuring to grab
     if (comments) {
         return (
             <div className="col-md-5 m-1">
@@ -34,7 +34,7 @@ function RenderComments({comments, addComment, campsiteId}) { //object destructu
                         <p key={comment.id}> -- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}</p>
                     </>
                 ))}
-                <CommentForm campsiteId={campsiteId} addComment={addComment} /> {/*passing props to child component */}
+                <CommentForm campsiteId={campsiteId} postComment={postComment} /> {/*passing props to child component */}
             </div>
         );
     }
@@ -67,7 +67,7 @@ class CommentForm extends Component {
 
     handleSubmit(values) {
         this.toggleModal();
-        this.props.addComment(this.props.campsiteId, values.rating, values.author, values.text); 
+        this.props.postComment(this.props.campsiteId, values.rating, values.author, values.text); 
         //addComment action creator will use this to create an action with the values in this form. gets dispatched to reducer to update state.
         
     }
@@ -175,7 +175,7 @@ function CampsiteInfo(props) {
                     <RenderCampsite campsite={props.campsite} />
                     <RenderComments 
                         comments={props.comments}
-                        addComment={props.addComment}
+                        postComment={props.postComment}
                         campsiteId={props.campsite.id}
                     />
                 </div>
