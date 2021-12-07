@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Breadcrumb, BreadcrumbItem, Button, Label, Col, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { render } from '@testing-library/react';
 import { Control, Form, Errors } from 'react-redux-form';
 
 const required = val => val && val.length;
@@ -34,11 +33,14 @@ class Contact extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-
+    //postFeedback action creator will use this to create an action with the values in this form. gets dispatched to reducer to update state.
     handleSubmit(values) {
-        console.log('Current state is: ' + JSON.stringify(values));
-        alert('Current state is: ' + JSON.stringify(values));
-        this.props.resetFeedbackForm(); // reset form values
+        console.log('Current state is : ' + JSON.stringify(values));
+        alert('Current State is: ' + JSON.stringify(values));
+        this.props.postFeedback(values);
+        this.props.resetFeedbackForm();
+        
+        //this.props.postFeedback(this.props.feedbackForm, values.firstName, values.lastName, values.phoneNum, values.email, values.agree, values.contactType, values.feedback);
     }
 
     render() {

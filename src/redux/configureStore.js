@@ -15,7 +15,7 @@ export const ConfigureStore = () => {
             campsites: Campsites,
             comments: Comments,
             partners: Partners,
-            promotions: Promotions, 
+            promotions: Promotions,
             ...createForms({
                 feedbackForm: InitialFeedback //InitialFeedback is model name in forms.js
             })

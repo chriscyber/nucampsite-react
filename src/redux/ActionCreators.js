@@ -41,6 +41,7 @@ export const addCampsites = campsites => ({
     payload: campsites
 });
 
+
 //using Thunk below (2 arrow functions)
 export const fetchComments = () => dispatch => {
     return fetch(baseUrl + 'comments')
@@ -65,7 +66,7 @@ export const fetchComments = () => dispatch => {
 
 
 export const commentsFailed = errMess => ({
-    type: import('react-redux-form').ActionTypes.COMMENTS_FAILED,
+    type: ActionTypes.COMMENTS_FAILED,
     payload: errMess
 });
 
@@ -153,3 +154,78 @@ export const addPromotions = promotions => ({
     type: ActionTypes.ADD_PROMOTIONS,
     payload: promotions
 });
+
+// Week 5 Workshop
+//using Thunk below (2 arrow functions)
+export const fetchPartners = () => dispatch => {
+    dispatch(partnersLoading());
+    
+    return fetch(baseUrl + 'partners')
+        .then(response => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => {
+                const errMess = new Error(error.message);
+                throw errMess;
+            }
+        )
+        .then(response => response.json())
+        .then(partners => dispatch(addPartners(partners)))
+        .catch(error => dispatch(partnersFailed(error.message)));
+};
+
+
+export const partnersLoading = () => ({ //action creator that just returns object, no payload, no middleware; goes straight to reducer
+    type: ActionTypes.PARTNERS_LOADING
+});
+
+export const partnersFailed = errMess => ({
+    type: ActionTypes.PARTNERS_FAILED,
+    payload: errMess
+});
+
+export const addPartners = partners => ({
+    type: ActionTypes.ADD_PARTNERS,
+    payload: partners
+}); // add comment to local redux store (no server interaction)
+
+
+export const postFeedback = (feedback) => dispatch => {
+    /*
+    const newFeedback = {
+        feedback: feedback
+    };
+    */
+
+    return fetch(baseUrl + 'feedback', {
+            method: "POST", //optional 2nd argument. default is GET
+            body: JSON.stringify(feedback), //json version of newFeedback object from above
+            headers: { // object so it can hold one or more headers
+                "Content-Type": "application/json" // server knows to expect body to be json formatted
+            }
+        })
+        .then(response => {
+                if (response.ok) {
+                    return response;
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => { throw error; }
+        )
+        .then(response => response.json())
+        .then(console.log('feedback: ' + JSON.stringify(feedback)))
+        .then(alert('thank you for your feedback!\nyou Submitted: ' + JSON.stringify(feedback)))
+        .catch(error => {
+            console.log('Feedback: ', error.message);
+            alert('Your feedback could not be posted\nError: ' + error.message);
+        });
+};
